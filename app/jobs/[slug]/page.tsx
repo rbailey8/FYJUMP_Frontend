@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CoachingBanner } from "@/components/Banner";
 import { getJobBySlug } from "@/lib/api";
-import { SITE_URL } from "@/lib/config";
+import { getSiteUrl } from "@/lib/config";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title,
     description,
-    alternates: { canonical: `${SITE_URL}/jobs/${job.slug}` },
+    alternates: { canonical: `${getSiteUrl()}/jobs/${job.slug}` },
     openGraph: { title, description, type: "website" },
   };
 }

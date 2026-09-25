@@ -8,8 +8,18 @@ export const API_BASE_URL = (
   "http://fyjump-publi-f00i83ghqeiq-1767779632.us-east-1.elb.amazonaws.com"
 ).replace(/\/$/, "");
 
-export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://hiring.fyjump.com";
+// Read per request (not inlined at build) so each Cloudflare Worker can set
+// its own SITE_URL in wrangler.jsonc — e.g. test.hiring.fyjump.com vs
+// hiring.fyjump.com — from the same build.
+export function getSiteUrl(): string {
+  return (process.env.SITE_URL || "https://hiring.fyjump.com").replace(/\/$/, "");
+}
+
+// Search engines may index the site only when ALLOW_INDEXING is "true".
+// Test deployments leave it unset so they never compete with production.
+export function allowIndexing(): boolean {
+  return process.env.ALLOW_INDEXING === "true";
+}
 
 export const MARKETING_SITE_URL = "https://www.fyjump.com";
 export const COURSES_URL = "https://www.fyjump.com/getting-started";

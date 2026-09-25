@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { searchJobs } from "@/lib/api";
-import { SITE_URL } from "@/lib/config";
+import { getSiteUrl } from "@/lib/config";
 
 // Build it per request: on Cloudflare there's no incremental cache configured,
 // so a build-time sitemap would stay frozen at whatever jobs existed at deploy.
@@ -11,6 +11,7 @@ const PAGE_SIZE = 100;
 const MAX_PAGES = 50;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const siteUrl = getSiteUrl();
   const jobs = [];
   for (let page = 1; page <= MAX_PAGES; page++) {
     const results = await searchJobs({ page: String(page), page_size: String(PAGE_SIZE) });
@@ -18,9 +19,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (results.items.length < PAGE_SIZE || jobs.length >= results.total) break;
   }
   const jobUrls = jobs.map((job) => ({
-    url: `${SITE_URL}/jobs/${job.slug}`,
+    url: `${siteUrl}/jobs/${job.slug}`,
     lastModified: job.date_posted || undefined,
     changeFrequency: "daily" as const,
   }));
-  return [{ url: SITE_URL, changeFrequency: "daily" as const }, ...jobUrls];
+  return [{ url: siteUrl, changeFrequency: "daily" as const }, ...jobUrls];
 }
