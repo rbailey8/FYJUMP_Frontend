@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Filters from "@/components/Filters";
 import JobCard from "@/components/JobCard";
+import Pagination from "@/components/Pagination";
 import { CoachingBanner, CoursesBanner } from "@/components/Banner";
 import { searchJobs } from "@/lib/api";
 
@@ -15,21 +16,33 @@ export default async function HomePage(props: Props) {
 
   return (
     <>
-      <p className="feed-label">
-        <span className="feed-dot" />
-        Live feed &middot; {results.total} open roles
-      </p>
-      <h1 className="page-title">Tech jobs, straight off the wire.</h1>
-      <p className="page-sub">
-        Pulled daily from Greenhouse, Lever, and Ashby career boards at FAANG, Fortune 500,
-        and startup companies. US-based roles only.
-      </p>
+      <section className="hero">
+        <span className="badge badge-live">
+          <span className="live-dot" />
+          Live feed &middot; {results.total} open roles
+        </span>
+        <h1 className="hero-title">Tech jobs, straight off the wire.</h1>
+        <p className="hero-sub">
+          Pulled daily from Greenhouse, Lever, and Ashby career boards at FAANG, Fortune 500,
+          and startup companies. US-based roles only.
+        </p>
+      </section>
 
       <Suspense fallback={null}>
         <Filters />
       </Suspense>
 
-      <CoursesBanner />
+      <div className="promo-grid">
+        <CoursesBanner />
+        <CoachingBanner />
+      </div>
+
+      <div className="roles-head">
+        <h2>
+          Open Roles <span className="count">{results.total}</span>
+        </h2>
+        <span className="roles-sort">Newest first</span>
+      </div>
 
       {results.items.length === 0 ? (
         <div className="empty-state">
@@ -44,7 +57,12 @@ export default async function HomePage(props: Props) {
         </div>
       )}
 
-      <CoachingBanner />
+      <Pagination
+        page={results.page || Number(page)}
+        pageSize={results.page_size || 20}
+        total={results.total}
+        searchParams={searchParams}
+      />
     </>
   );
 }

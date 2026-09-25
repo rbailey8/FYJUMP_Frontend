@@ -25,37 +25,44 @@ export default function Filters() {
         update("q", q);
       }}
     >
-      <input
-        type="text"
-        placeholder="Search title, company, location..."
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-      />
-      <select defaultValue={params.get("category") || ""} onChange={(e) => update("category", e.target.value)}>
+      <label className="search-field">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m20 20-3.5-3.5" />
+        </svg>
+        <input
+          type="text"
+          aria-label="Search jobs"
+          placeholder="Search role, company, location..."
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+        />
+      </label>
+      <select aria-label="Category" defaultValue={params.get("category") || ""} onChange={(e) => update("category", e.target.value)}>
         <option value="">All categories</option>
         {CATEGORIES.map((c) => (
           <option key={c} value={c}>{c}</option>
         ))}
       </select>
-      <select defaultValue={params.get("experience_level") || ""} onChange={(e) => update("experience_level", e.target.value)}>
+      <select aria-label="Experience" defaultValue={params.get("experience_level") || ""} onChange={(e) => update("experience_level", e.target.value)}>
         <option value="">All experience</option>
         {EXPERIENCE_LEVELS.map((l) => (
           <option key={l.value} value={l.value}>{l.label}</option>
         ))}
       </select>
-      <select defaultValue={params.get("job_type") || ""} onChange={(e) => update("job_type", e.target.value)}>
+      <select aria-label="Job type" defaultValue={params.get("job_type") || ""} onChange={(e) => update("job_type", e.target.value)}>
         <option value="">All job types</option>
         {JOB_TYPES.map((t) => (
           <option key={t} value={t}>{t}</option>
         ))}
       </select>
-      <select defaultValue={params.get("date_posted") || ""} onChange={(e) => update("date_posted", e.target.value)}>
+      <select aria-label="Date posted" defaultValue={params.get("date_posted") || ""} onChange={(e) => update("date_posted", e.target.value)}>
         <option value="">Any time</option>
         {DATE_FILTERS.map((d) => (
           <option key={d.value} value={d.value}>{d.label}</option>
         ))}
       </select>
-      <button type="submit">Search</button>
+      <button type="submit" className="btn btn-yellow">Filter feed</button>
     </form>
   );
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CoachingBanner } from "@/components/Banner";
 import { getJobBySlug } from "@/lib/api";
@@ -65,26 +66,31 @@ export default async function JobDetailPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="job-detail-header">
-        <p className="company-name">{job.company}</p>
-        <h1 className="page-title">{job.title}</h1>
-        <p className="job-meta">
-          {job.location} &middot; {job.job_type} &middot; {job.experience_level} yrs &middot; {job.category}
-        </p>
-      </div>
+      <Link href="/" className="back-link">&larr; All jobs</Link>
 
-      <div className="job-body">
+      <article className="detail-card">
+        <p className="job-company">
+          <strong>{job.company}</strong>
+          <span className="job-location"> &bull; {job.location}</span>
+          {job.remote && <span className="pill pill-lavender">Remote</span>}
+        </p>
+        <h1 className="detail-title">{job.title}</h1>
+        <div className="job-tags">
+          <span className="tag tag-yellow">{job.experience_level} yrs exp</span>
+          <span className="tag">{job.category}</span>
+          <span className="tag">{job.job_type}</span>
+        </div>
+        <a className="btn btn-yellow detail-apply" href={job.apply_url} target="_blank" rel="noopener noreferrer">
+          Apply on {job.company} {"\u2197"}
+        </a>
         <div className="job-description">
           {job.description_text || "See full details via Apply."}
         </div>
-      </div>
-      <div style={{ padding: "0 0 32px" }}>
-        <a className="apply-btn" href={job.apply_url} target="_blank" rel="noopener noreferrer">
-          Apply on {job.company} {"\u2192"}
-        </a>
-      </div>
+      </article>
 
-      <CoachingBanner />
+      <div className="detail-promo">
+        <CoachingBanner />
+      </div>
     </>
   );
 }
