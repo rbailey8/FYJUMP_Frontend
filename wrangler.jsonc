@@ -1,0 +1,27 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fyjump-hiring",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "fyjump-hiring"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  },
+  // Runtime variables for the deployed Worker. API_BASE_URL is read on the
+  // server per request. NEXT_PUBLIC_SITE_URL is baked in at build time; the
+  // production value is also the default in lib/config.ts.
+  "vars": {
+    "API_BASE_URL": "http://fyjump-publi-f00i83ghqeiq-1767779632.us-east-1.elb.amazonaws.com",
+    "NEXT_PUBLIC_SITE_URL": "https://hiring.fyjump.com"
+  }
+}

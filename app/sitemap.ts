@@ -2,7 +2,9 @@ import type { MetadataRoute } from "next";
 import { searchJobs } from "@/lib/api";
 import { SITE_URL } from "@/lib/config";
 
-export const revalidate = 3600;
+// Build it per request: on Cloudflare there's no incremental cache configured,
+// so a build-time sitemap would stay frozen at whatever jobs existed at deploy.
+export const dynamic = "force-dynamic";
 
 // The API caps page_size at 100, so walk the pages until we have every job.
 const PAGE_SIZE = 100;

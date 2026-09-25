@@ -6,9 +6,10 @@ import { searchJobs } from "@/lib/api";
 
 export const revalidate = 300;
 
-type Props = { searchParams: Record<string, string | undefined> };
+type Props = { searchParams: Promise<Record<string, string | undefined>> };
 
-export default async function HomePage({ searchParams }: Props) {
+export default async function HomePage(props: Props) {
+  const searchParams = await props.searchParams;
   const page = searchParams.page || "1";
   const results = await searchJobs({ ...searchParams, page });
 

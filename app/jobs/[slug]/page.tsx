@@ -4,10 +4,11 @@ import { CoachingBanner } from "@/components/Banner";
 import { getJobBySlug } from "@/lib/api";
 import { SITE_URL } from "@/lib/config";
 
-type Props = { params: { slug: string } };
+type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const job = await getJobBySlug(params.slug);
+  const { slug } = await params;
+  const job = await getJobBySlug(slug);
   if (!job) return {};
   const title = `${job.title} at ${job.company}`;
   const description = `${job.title} — ${job.company}, ${job.location}. ${job.job_type}, ${job.experience_level} years experience.`;
@@ -26,7 +27,8 @@ const EMPLOYMENT_TYPE_MAP: Record<string, string> = {
 };
 
 export default async function JobDetailPage({ params }: Props) {
-  const job = await getJobBySlug(params.slug);
+  const { slug } = await params;
+  const job = await getJobBySlug(slug);
   if (!job) notFound();
 
   // Google Jobs structured data — this is what makes the posting eligible
