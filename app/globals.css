@@ -459,11 +459,9 @@ main.wrap { padding-bottom: 48px; }
 }
 .admin-result.error { border-color: #f3c1bc; background: #fff5f4; color: var(--coral); }
 .admin-result-title { margin: 0 0 10px; font-family: var(--font-label); font-size: 12px; font-weight: 700; color: var(--lavender-text); }
-.admin-warning { margin: 0 0 12px; color: #7a5b00; background: var(--yellow-soft); border-radius: 8px; padding: 8px 10px; font-size: 13.5px; }
 .admin-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 0 0 12px; }
 .admin-stats dt { color: var(--text-muted); font-size: 12px; }
 .admin-stats dd { margin: 2px 0 0; font-family: var(--font-label); font-size: 22px; font-weight: 700; }
-.admin-failures { margin: 0; padding-left: 18px; color: var(--text-muted); font-size: 13px; }
 
 /* ---------- Footer ---------- */
 .site-footer {

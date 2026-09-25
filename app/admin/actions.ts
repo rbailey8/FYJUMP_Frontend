@@ -2,17 +2,19 @@
 
 import { API_BASE_URL } from "@/lib/config";
 
+// Response of the ingestion service's POST /admin/jobs/refresh.
 export type RefreshReport = {
-  companies_total: number;
-  companies_ok: number;
-  companies_failed: { company: string; error: string }[];
-  jobs_fetched: number;
-  jobs_kept_us: number;
-  limit?: number | null;
+  status: string;
+  max_jobs: number | null;
+  jobs_processed: number;
+  jobs_inserted: number;
+  jobs_updated: number;
+  jobs_skipped: number;
+  message: string;
 };
 
 export type RefreshResult =
-  | { status: "done"; report: RefreshReport; requestedLimit: number | null }
+  | { status: "done"; report: RefreshReport }
   | { status: "running"; message: string }
   | { status: "error"; message: string };
 
@@ -36,13 +38,12 @@ export async function runRefresh(
     limit = Number(limitRaw);
   }
 
-  const url = `${API_BASE_URL}/jobs/refresh${limit ? `?limit=${limit}` : ""}`;
-
   let res: Response;
   try {
-    res = await fetch(url, {
+    res = await fetch(`${API_BASE_URL}/admin/jobs/refresh`, {
       method: "POST",
-      headers: { "x-admin-key": adminKey },
+      headers: { "x-admin-key": adminKey, "Content-Type": "application/json" },
+      body: JSON.stringify({ max_jobs: limit }),
       cache: "no-store",
     });
   } catch {
@@ -50,7 +51,7 @@ export async function runRefresh(
   }
 
   if (res.ok) {
-    return { status: "done", report: await res.json(), requestedLimit: limit };
+    return { status: "done", report: await res.json() };
   }
 
   const detail = await res

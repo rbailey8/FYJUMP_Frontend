@@ -51,35 +51,17 @@ function RefreshOutcome({ result }: { result: RefreshResult }) {
   }
 
   const r = result.report;
-  // A backend without limit support ignores ?limit and omits it from the report.
-  const limitIgnored = result.requestedLimit !== null && r.limit === undefined;
+  const ok = r.status === "success";
   return (
-    <div className="admin-result" role="status">
-      <p className="admin-result-title">Refresh complete</p>
-      {limitIgnored && (
-        <p className="admin-warning">
-          The API ignored the number of jobs and refreshed all of them. The backend needs the
-          update that adds the limit option.
-        </p>
-      )}
+    <div className={`admin-result${ok ? "" : " error"}`} role="status">
+      <p className="admin-result-title">{ok ? "Refresh complete" : "Refresh failed"}</p>
       <dl className="admin-stats">
-        <div><dt>Jobs on the board</dt><dd>{r.jobs_kept_us}</dd></div>
-        <div><dt>Postings fetched</dt><dd>{r.jobs_fetched}</dd></div>
-        <div><dt>Companies OK</dt><dd>{r.companies_ok} / {r.companies_total}</dd></div>
-        <div><dt>Limit</dt><dd>{r.limit ?? "All"}</dd></div>
+        <div><dt>Jobs processed</dt><dd>{r.jobs_processed}</dd></div>
+        <div><dt>New jobs</dt><dd>{r.jobs_inserted}</dd></div>
+        <div><dt>Updated jobs</dt><dd>{r.jobs_updated}</dd></div>
+        <div><dt>Limit</dt><dd>{r.max_jobs ?? "All"}</dd></div>
       </dl>
-      {r.companies_failed.length > 0 && (
-        <>
-          <p className="admin-result-title">Companies that failed</p>
-          <ul className="admin-failures">
-            {r.companies_failed.map((f) => (
-              <li key={f.company}>
-                <strong>{f.company}</strong>: {f.error.split(" For more information")[0]}
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
+      <p className="admin-hint">{r.message}</p>
     </div>
   );
 }
