@@ -5,7 +5,7 @@
 // browser), so this can stay a private, non-NEXT_PUBLIC variable.
 export const API_BASE_URL = (
   process.env.API_BASE_URL ||
-  "http://fyjump-publi-f00i83ghqeiq-1767779632.us-east-1.elb.amazonaws.com"
+  "https://api.fyjump.com"
 ).replace(/\/$/, "");
 
 // Read per request (not inlined at build) so each Cloudflare Worker can set
