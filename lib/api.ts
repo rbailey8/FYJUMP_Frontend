@@ -1,5 +1,15 @@
 import { API_BASE_URL } from "./config";
 
+// Structured by the API; the frontend only renders it.
+export type DescriptionBlock =
+  | { type: "paragraph"; text: string }
+  | { type: "list"; items: string[] };
+
+export type DescriptionSection = {
+  heading: string;
+  blocks: DescriptionBlock[];
+};
+
 export type Job = {
   id: string;
   slug: string;
@@ -12,6 +22,8 @@ export type Job = {
   job_type: string;
   date_posted: string | null;
   description_text: string;
+  // Only on single-job responses (GET /jobs/slug/{slug}).
+  description_sections?: DescriptionSection[];
   locations?: string[];
   apply_url: string;
   source: string;

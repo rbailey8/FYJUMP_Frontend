@@ -30,6 +30,7 @@ export default function Footer() {
             <p className="footer-heading">FYJUMP</p>
             <a href={MARKETING_SITE_URL}>fyjump.com</a>
             <a href={`${MARKETING_SITE_URL}/we-are-fyjump`}>About</a>
+            <Link href="/admin">Admin</Link>
           </div>
         </div>
         <div className="footer-bottom">

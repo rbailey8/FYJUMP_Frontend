@@ -403,6 +403,12 @@ main.wrap { padding-bottom: 48px; }
   line-height: 1.7;
   white-space: pre-line;
 }
+.job-sections { white-space: normal; }
+.desc-section + .desc-section { margin-top: 22px; }
+.desc-section h2 { margin: 0 0 8px; font-size: 17px; font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
+.desc-section p { margin: 0 0 10px; }
+.desc-section ul { margin: 0 0 10px; padding-left: 20px; }
+.desc-section li { margin-bottom: 4px; }
 .detail-promo { margin-top: 20px; }
 
 /* ---------- Admin ---------- */

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CoachingBanner } from "@/components/Banner";
-import { getJobBySlug } from "@/lib/api";
+import { getJobBySlug, type Job } from "@/lib/api";
 import { getSiteUrl } from "@/lib/config";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -83,14 +83,45 @@ export default async function JobDetailPage({ params }: Props) {
         <a className="btn btn-yellow detail-apply" href={job.apply_url} target="_blank" rel="noopener noreferrer">
           Apply on {job.company} {"\u2197"}
         </a>
-        <div className="job-description">
-          {job.description_text || "See full details via Apply."}
-        </div>
+        <JobDescription job={job} />
       </article>
 
       <div className="detail-promo">
         <CoachingBanner />
       </div>
     </>
+  );
+}
+
+// Shows the API's sections when present, then its plain-text description,
+// then a pointer to the posting. No parsing happens here.
+function JobDescription({ job }: { job: Job }) {
+  const sections = job.description_sections ?? [];
+  if (sections.length === 0) {
+    return (
+      <div className="job-description">
+        {job.description_text || "See full details via Apply."}
+      </div>
+    );
+  }
+  return (
+    <div className="job-description job-sections">
+      {sections.map((section, i) => (
+        <section key={i} className="desc-section">
+          <h2>{section.heading}</h2>
+          {section.blocks.map((block, j) =>
+            block.type === "list" ? (
+              <ul key={j}>
+                {block.items.map((item, k) => (
+                  <li key={k}>{item}</li>
+                ))}
+              </ul>
+            ) : (
+              <p key={j}>{block.text}</p>
+            )
+          )}
+        </section>
+      ))}
+    </div>
   );
 }
