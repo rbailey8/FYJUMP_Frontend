@@ -18,12 +18,13 @@
     "enabled": true
   },
   // Runtime variables, read by the server on each request.
-  // This Worker is the TEST site: ALLOW_INDEXING stays "false" so search
-  // engines skip it. A production Worker would use SITE_URL
-  // https://hiring.fyjump.com and ALLOW_INDEXING "true".
+  // This Worker is the TEST site, served on its workers.dev address until
+  // fyjump.com's DNS moves to Cloudflare (then: https://test.hiring.fyjump.com).
+  // ALLOW_INDEXING stays "false" so search engines skip it. A production
+  // Worker would use SITE_URL https://hiring.fyjump.com and ALLOW_INDEXING "true".
   "vars": {
     "API_BASE_URL": "http://fyjump-publi-f00i83ghqeiq-1767779632.us-east-1.elb.amazonaws.com",
-    "SITE_URL": "https://test.hiring.fyjump.com",
+    "SITE_URL": "https://fyjump-hiring.rahmelabailey.workers.dev",
     "ALLOW_INDEXING": "false"
   }
 }
