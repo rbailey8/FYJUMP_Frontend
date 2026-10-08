@@ -21,8 +21,11 @@ export type Job = {
   experience_level: string;
   job_type: string;
   date_posted: string | null;
-  description_text: string;
-  // Only on single-job responses (GET /jobs/slug/{slug}).
+  // Employer's end date (some Workday jobs); expired jobs are never returned.
+  valid_through?: string | null;
+  // Only on single-job responses (GET /jobs/slug/{slug}); list responses
+  // leave descriptions out.
+  description_text?: string;
   description_sections?: DescriptionSection[];
   locations?: string[];
   apply_url: string;
@@ -73,6 +76,26 @@ export async function getJobBySlug(slug: string): Promise<Job | null> {
   try {
     const res = await fetch(`${API_BASE_URL}/jobs/slug/${encodeURIComponent(slug)}`, {
       next: { revalidate: 300 },
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+export type SitemapPage = {
+  total: number;
+  page: number;
+  page_size: number;
+  items: { slug: string; updated_at: string | null }[];
+};
+
+/** One page of live job slugs (GET /jobs/sitemap); null when the API is unreachable. */
+export async function getSitemapPage(page: number, pageSize: number): Promise<SitemapPage | null> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/jobs/sitemap?page=${page}&page_size=${pageSize}`, {
+      next: { revalidate: 3600 },
     });
     if (!res.ok) return null;
     return await res.json();

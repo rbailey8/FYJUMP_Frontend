@@ -21,6 +21,10 @@ export function allowIndexing(): boolean {
   return process.env.ALLOW_INDEXING === "true";
 }
 
+// Live job URLs per sitemap file (Google's limit is 50,000; the API's
+// /jobs/sitemap returns at most 10,000 per page).
+export const JOBS_PER_SITEMAP = 10000;
+
 export const MARKETING_SITE_URL = "https://www.fyjump.com";
 export const COURSES_URL = "https://www.fyjump.com/getting-started";
 export const COACHING_URL = "https://calendly.com/rahmelabailey/strategy";

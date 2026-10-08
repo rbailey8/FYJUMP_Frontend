@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { CoachingBanner } from "@/components/Banner";
 import { getJobBySlug, type Job } from "@/lib/api";
 import { getSiteUrl } from "@/lib/config";
+import { descriptionHtml, jobPlaces } from "@/lib/jobPosting";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -31,6 +32,7 @@ export default async function JobDetailPage({ params }: Props) {
   const { slug } = await params;
   const job = await getJobBySlug(slug);
   if (!job) notFound();
+  const places = jobPlaces(job.location);
 
   // Google Jobs structured data — this is what makes the posting eligible
   // to appear in Google's job search surface.
@@ -38,8 +40,10 @@ export default async function JobDetailPage({ params }: Props) {
     "@context": "https://schema.org/",
     "@type": "JobPosting",
     title: job.title,
-    description: job.description_text || job.title,
+    description: descriptionHtml(job),
+    identifier: { "@type": "PropertyValue", name: job.company, value: job.id },
     datePosted: job.date_posted || undefined,
+    validThrough: job.valid_through || undefined,
     employmentType: EMPLOYMENT_TYPE_MAP[job.job_type] || "FULL_TIME",
     hiringOrganization: {
       "@type": "Organization",
@@ -47,10 +51,9 @@ export default async function JobDetailPage({ params }: Props) {
     },
     jobLocation: job.remote
       ? undefined
-      : {
-          "@type": "Place",
-          address: { "@type": "PostalAddress", addressLocality: job.location, addressCountry: "US" },
-        },
+      : places.length === 1
+        ? places[0]
+        : places,
     applicantLocationRequirements: job.remote
       ? { "@type": "Country", name: "USA" }
       : undefined,
@@ -63,7 +66,8 @@ export default async function JobDetailPage({ params }: Props) {
       {/* eslint-disable-next-line react/no-danger */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        // "<" escaped so text in a scraped description can't close the tag.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
 
       <Link href="/" className="back-link">&larr; All jobs</Link>
@@ -109,7 +113,7 @@ function JobDescription({ job }: { job: Job }) {
       {sections.map((section, i) => (
         <section key={i} className="desc-section">
           <h2>{section.heading}</h2>
-          {section.blocks.map((block, j) =>
+          {(section.blocks ?? []).map((block, j) =>
             block.type === "list" ? (
               <ul key={j}>
                 {block.items.map((item, k) => (
