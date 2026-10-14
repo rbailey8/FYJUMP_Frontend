@@ -1,4 +1,4 @@
-import { getSitemapPage } from "@/lib/api";
+import { getSitemapPage, jobPath } from "@/lib/api";
 import { getSiteUrl, JOBS_PER_SITEMAP } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +20,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ fil
   const siteUrl = getSiteUrl();
   const urls = data.items.map(
     (job) =>
-      `<url><loc>${escapeXml(`${siteUrl}/jobs/${job.slug}`)}</loc>` +
+      `<url><loc>${escapeXml(`${siteUrl}${jobPath(job)}`)}</loc>` +
       (job.updated_at ? `<lastmod>${job.updated_at}</lastmod>` : "") +
       `<changefreq>daily</changefreq></url>`,
   );

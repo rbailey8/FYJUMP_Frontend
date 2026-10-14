@@ -33,9 +33,10 @@ export type Job = {
 };
 
 export type JobSearchResult = {
-  total: number;
   page: number;
   page_size: number;
+  // True when another page follows; the API doesn't count matching jobs.
+  has_more: boolean;
   items: Job[];
 };
 
@@ -50,7 +51,7 @@ export type SearchParams = {
   page_size?: string;
 };
 
-const EMPTY_RESULT: JobSearchResult = { total: 0, page: 1, page_size: 20, items: [] };
+const EMPTY_RESULT: JobSearchResult = { page: 1, page_size: 20, has_more: false, items: [] };
 
 export async function searchJobs(params: SearchParams): Promise<JobSearchResult> {
   const qs = new URLSearchParams();
@@ -72,9 +73,21 @@ export async function searchJobs(params: SearchParams): Promise<JobSearchResult>
   }
 }
 
-export async function getJobBySlug(slug: string): Promise<Job | null> {
+/** "/jobs/<readable text>-<uuid>". Only the uuid at the end is used to load
+ *  the job; the text (the API's slug minus its 8-character id suffix) is for
+ *  people and search engines. */
+export function jobPath(job: { id: string; slug: string }): string {
+  return `/jobs/${job.slug.replace(/-[0-9a-f]{8}$/, "")}-${job.id}`;
+}
+
+/** The uuid at the end of a jobPath() URL segment. */
+export function jobIdFromPath(segment: string): string {
+  return segment.slice(-36);
+}
+
+export async function getJob(id: string): Promise<Job | null> {
   try {
-    const res = await fetch(`${API_BASE_URL}/jobs/slug/${encodeURIComponent(slug)}`, {
+    const res = await fetch(`${API_BASE_URL}/jobs/${encodeURIComponent(id)}`, {
       next: { revalidate: 300 },
     });
     if (!res.ok) return null;
@@ -88,7 +101,7 @@ export type SitemapPage = {
   total: number;
   page: number;
   page_size: number;
-  items: { slug: string; updated_at: string | null }[];
+  items: { id: string; slug: string; updated_at: string | null }[];
 };
 
 /** One page of live job slugs (GET /jobs/sitemap); null when the API is unreachable. */

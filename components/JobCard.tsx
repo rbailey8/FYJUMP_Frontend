@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Job } from "@/lib/api";
+import { jobPath, type Job } from "@/lib/api";
 
 function timeAgo(iso: string | null): string {
   if (!iso) return "";
@@ -27,7 +27,7 @@ export default function JobCard({ job }: { job: Job }) {
         </p>
         <h3 className="job-title">
           {/* Stretched link: the whole card opens the job page. */}
-          <Link href={`/jobs/${job.slug}`} className="card-link">{job.title}</Link>
+          <Link href={jobPath(job)} className="card-link">{job.title}</Link>
         </h3>
         <div className="job-tags">
           <span className="tag tag-yellow">{job.experience_level} yrs exp</span>

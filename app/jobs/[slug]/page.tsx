@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CoachingBanner } from "@/components/Banner";
-import { getJobBySlug, type Job } from "@/lib/api";
+import { getJob, jobIdFromPath, jobPath, type Job } from "@/lib/api";
 import { getSiteUrl } from "@/lib/config";
 import { descriptionHtml, jobPlaces } from "@/lib/jobPosting";
 
@@ -10,14 +10,14 @@ type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const job = await getJobBySlug(slug);
+  const job = await getJob(jobIdFromPath(slug));
   if (!job) return {};
   const title = `${job.title} at ${job.company}`;
   const description = `${job.title} — ${job.company}, ${job.location}. ${job.job_type}, ${job.experience_level} years experience.`;
   return {
     title,
     description,
-    alternates: { canonical: `${getSiteUrl()}/jobs/${job.slug}` },
+    alternates: { canonical: `${getSiteUrl()}${jobPath(job)}` },
     openGraph: { title, description, type: "website" },
   };
 }
@@ -30,7 +30,7 @@ const EMPLOYMENT_TYPE_MAP: Record<string, string> = {
 
 export default async function JobDetailPage({ params }: Props) {
   const { slug } = await params;
-  const job = await getJobBySlug(slug);
+  const job = await getJob(jobIdFromPath(slug));
   if (!job) notFound();
   const places = jobPlaces(job.location);
 

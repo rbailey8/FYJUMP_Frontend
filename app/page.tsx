@@ -19,7 +19,7 @@ export default async function HomePage(props: Props) {
       <section className="hero">
         <span className="badge badge-live">
           <span className="live-dot" />
-          Live feed &middot; {results.total} open roles
+          Live feed &middot; updated daily
         </span>
         <h1 className="hero-title">Tech jobs, straight off the wire.</h1>
         <p className="hero-sub">
@@ -39,7 +39,7 @@ export default async function HomePage(props: Props) {
 
       <div className="roles-head">
         <h2>
-          Open Roles <span className="count">{results.total}</span>
+          Open Roles
         </h2>
         <span className="roles-sort">Newest first</span>
       </div>
@@ -59,8 +59,7 @@ export default async function HomePage(props: Props) {
 
       <Pagination
         page={results.page || Number(page)}
-        pageSize={results.page_size || 20}
-        total={results.total}
+        hasMore={results.has_more}
         searchParams={searchParams}
       />
     </>
